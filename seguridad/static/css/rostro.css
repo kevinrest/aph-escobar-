@@ -1,0 +1,19 @@
+.contenedor{
+    /* background-color: black; */
+    background-image: url(../img/logo.png);
+    background-size: 10%;
+    width: 99%;
+    height: 37rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.campo{
+    margin: 5px 0;
+}
+
+.card{
+    box-shadow: 12px 12px 10px #2557F3, -12px -12px 10px #8711F5;
+    margin: 20px 0;
+}

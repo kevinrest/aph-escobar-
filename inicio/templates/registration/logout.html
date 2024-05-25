@@ -1,0 +1,19 @@
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FaceCheck</title>
+</head>
+<body>
+    <span><a href="/sesion/" style="font-size: 30px;color: black;">
+        <script>
+            let cerrar = window.confirm('¿Estás seguro de querer cerrar sesión?')
+            if(cerrar == true){
+                window.location = '/sesion/'
+            }else{
+                window.location = '/seguridad/'
+            }
+        </script>
+    </a></span>
+</body>
+</html>
