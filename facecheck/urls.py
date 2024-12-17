@@ -17,7 +17,7 @@ urlpatterns = [
     path('registrar/', Registrar, name='registrar'),
     path('registro/', Registrar2, name='registro'),
     path('reconocimiento/', Reconocimiento, name='reconocimiento'),
-    path('reconociendo/', Reconociendo),
+    path('reconociendo/', Reconociendo, name="reconociendo"),
     path('users/', Users, name='users'),
     path("editar/<int:id>/", Editar, name='editar'),
     path("eliminar/<int:id>/", Eliminar, name='eliminar'),

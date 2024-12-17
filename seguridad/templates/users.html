@@ -22,9 +22,12 @@
                     <div class="collapse collapse-horizontal" id="collapseWidthExample">
                       <div class="card card-body" style="width: 300px;">
                         <ul>
-                            <li class="lista"><a href="/registro/" class="redic">Registrar usuario</a></li>
-                            <li class="lista"><a href="/seguridad/" class="redic">Página principal</a></li>
-                            <li class="lista"><a href="/logout/" class="redic">Cerrar sesión</a></li>
+                          <li class="lista"><a href="/seguridad/" class="redic">Página principal</a></li>
+                          <li class="lista"><a href="/registro/" class="redic">Registrar usuario</a></li>
+                          <li class="lista"><a href="/users/" class="redic">Usuarios registrados</a></li>
+                          <li class="lista"><a href="/reconocimiento/" class="redic">Reconocer</a></li>
+                          <li class="lista"><a href="/reconociendo/" class="redic">Reconociendo</a></li>
+                          <li class="lista"><a href="/logout/" class="redic">Cerrar sesión</a></li>
                         </ul>
                       </div>
                     </div>
@@ -66,6 +69,17 @@
                     {% endfor %}
                 </thead>
               </table>
+
+              {% if messages %}
+                  <ul class="messages">
+                      {% for i in messages %}
+                          <div class="alert alert-primary alert-dismissible" role="alert">
+                              {{ i }}
+                              <button class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                          </div>
+                      {% endfor %}
+                  </ul>
+              {% endif %}
             </div>
         </div>
     </div>

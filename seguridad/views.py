@@ -9,6 +9,7 @@ from django.contrib import messages
 from seguridad import models
 from seguridad.forms import Residents
 from shutil import rmtree
+import serial, time
 
 def Reconociendo(request):
     dataPath = ''"C:/Users/kevin/OneDrive/Documentos/cara/seguridad/reconocimiento/data"
@@ -25,7 +26,7 @@ def Reconociendo(request):
         pathArchivo = personPath
         pathCompleto = os.path.join(pathScript, pathArchivo)
 
-        print('Leyendo las imagenes')
+        # print('Leyendo las imagenes')
 
         for fileName in os.listdir(personPath):
             print(f'Rostros: {nameDir + '/' + fileName}')
@@ -50,7 +51,8 @@ def Reconociendo(request):
     # face_recognizer.write('modeloEigenFace.xml')
     # face_recognizer.write('modeloFisherFace.xml')
     face_recognizer.write('modeloLBPHFace.xml')
-    return redirect('login')
+    messages.info(request, 'Reconocimiento exitoso')
+    return redirect('seguridad')
     
 
 def Registrar(request):
@@ -63,7 +65,7 @@ def Registrar(request):
 
 
     personName = f'{nombre}_{apellido}'
-    dataPath = ''"C:/Users/kevin/OneDrive/Documentos/cara/seguridad/reconocimiento/data"
+    dataPath = "C:/Users/kevin/OneDrive/Documentos/cara/seguridad/reconocimiento/data"
     personPath = dataPath + '/' + personName
     # print(personPath)
 
@@ -71,7 +73,7 @@ def Registrar(request):
         os.makedirs(personPath)
 
     url = "https://192.168.0.25:8080/video"
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(1, cv2.CAP_DSHOW)
 
     faceClassif = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
     count = 0
@@ -108,7 +110,6 @@ def Registrar(request):
         
     cap.release()
     cv2.destroyAllWindows()
-    Reconociendo(request)
     messages.info(request, 'Registro exitoso')
     return render(request, 'registrar-rostro.html')
 
@@ -133,77 +134,130 @@ def Reconocimiento(request):
     face_recognizer.read('modeloLBPHFace.xml')
     
     url = "https://192.168.1.14:8080/video"
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(1,cv2.CAP_DSHOW)
+    cap2 = cv2.VideoCapture(1)
 
     faceClassif = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
     file = [] 
 
+    # codigo para conectar con arduino
+    # arduino = serial.Serial('COM3',9600)
+    # time.sleep(2)
+
     while True:        
         ret, frame = cap.read()
-        if ret == False: break
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        auxframe = gray.copy()
+        ret2, frame2 = cap2.read()
 
-        faces = faceClassif.detectMultiScale(gray,1.3,5)
+        if ret:
+            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            auxframe = gray.copy()
 
-        for (x,y,w,h) in faces:
-            rostro = auxframe[y:y+h,x:x+w]
-            rostro = cv2.resize(rostro,(150,150), interpolation=cv2.INTER_CUBIC)
-            result = face_recognizer.predict(rostro)
-            # print(rostro)
+            faces = faceClassif.detectMultiScale(gray,1.3,5)
 
-            cv2.putText(frame, '{}'.format(result), (x,y-5),1,1.3,(255,255,0),1,cv2.LINE_AA)
-            filename = f'/{imagePaths[result[0]]}_250.jpg'
-            a = 0
-            while len(file) < len(imagePaths):
-                file.append(' ')
+            # try:
+            #     if len(faces) == 1 and arduino.is_open:
+            #         confirm = True
+            #     elif len(faces) == 0 and not arduino.is_open:
+            #         confirm = False
+            #         arduino.open()
+            # except serial.SerialException as e:
+            #     print(f'error 1 {e}')
 
-                file[a] = filename
+            for (x,y,w,h) in faces:
+                rostro = auxframe[y:y+h,x:x+w]
+                rostro = cv2.resize(rostro,(150,150), interpolation=cv2.INTER_CUBIC)
+                result = face_recognizer.predict(rostro)
 
-                a += 1
-            print(file)
-        
-            a = 0
-            for i in file:
-                a += 1
-                if a == len(file):
-                    break
-                elif file[a-1] == file[a]:
-                    file.remove(file[a])
-                    file.append(' ')
-                    print('borrado')
+                cv2.putText(frame, '{}'.format(result), (x,y-5),1,1.3,(255,255,0),1,cv2.LINE_AA)
                 
-                if len(file[a]) == 1 and file[0] != filename:
-                    file[a] = filename
-                    print('aqui entro')
-                    break
+                if result[1] < 60:
+                    # try:
+                    #     if confirm == True:
+                    #         arduino.write(b'1')
+                    #         arduino.close()
+                    # except serial.SerialException as e:
+                    #     print(f'error {e}')
+                    
+
+                    filename = f'/{imagePaths[result[0]]}_250.jpg'
+                    a = 0
+                    while len(file) < len(imagePaths):
+                        file.append(' ')
+    
+                        file[a] = filename
+    
+                        a += 1
+                    print(file)
+    
+                    a = 0
+                    for i in file:
+                        a += 1
+                        if a == len(file):
+                            break
+                        elif file[a-1] == file[a]:
+                            file.remove(file[a])
+                            file.append(' ')
+                            print('borrado')
+    
+                        if len(file[a]) == 1 and file[0] != filename:
+                            file[a] = filename
+                            print('aqui entro')
+                            break
+                        else:
+                            pass
+                        
+                    conjunto = set(file)
+                    cv2.putText(frame, '{}'.format(imagePaths[result[0]]), (x,y-25),2,1.1,(0,255,0),1,cv2.LINE_AA)
+                    cv2.rectangle(frame, (x,y), (x+w,y+h), (0,255,0),2) 
                 else:
-                    pass
+                    conjunto = ' '
 
-            conjunto = set(file)
+                    # try:
+                    #     if confirm == True and arduino.is_open:
+                    #         arduino.write(b'0')
+                    #         arduino.close()
+                    # except serial.SerialException as e:
+                    #     print(f'error 2 {e}')
 
-            # file = list(conjunto)
-                # if file.count(i) > 1:
-                #     file.remove(i)
-                #     break
+                    cv2.putText(frame, 'Desconocido', (x,y-20),2,0.8,(0,0,255),1,cv2.LINE_AA)
+                    cv2.rectangle(frame, (x,y), (x+w,y+h), (0,0,255),2)
 
-            if result[1] < 80:
-                cv2.putText(frame, '{}'.format(imagePaths[result[0]]), (x,y-25),2,1.1,(0,255,0),1,cv2.LINE_AA)
-                cv2.rectangle(frame, (x,y), (x+w,y+h), (0,255,0),2) 
-            else:
-                cv2.putText(frame, 'Desconocido', (x,y-20),2,0.8,(0,0,255),1,cv2.LINE_AA)
-                cv2.rectangle(frame, (x,y), (x+w,y+h), (0,0,255),2)
-            
-            # cv2.rectangle(frame, (x,y), (x+w,y+h), (0,255,0),2)
+            cv2.imshow('frame',cv2.resize(frame,(800,600)))
 
-        cv2.imshow('frame',cv2.resize(frame,(800,600)))
+
+        # if ret2:
+        #     gray = cv2.cvtColor(frame2, cv2.COLOR_BGR2GRAY)
+        #     auxframe = gray.copy()
+
+        #     faces = faceClassif.detectMultiScale(gray,1.3,5)
+
+        #     for (x,y,w,h) in faces:
+        #         rostro = auxframe[y:y+h,x:x+w]
+        #         rostro = cv2.resize(rostro,(150,150), interpolation=cv2.INTER_CUBIC)
+        #         result = face_recognizer.predict(rostro)
+        #         # print(rostro)
+
+        #         cv2.putText(frame2, '{}'.format(result), (x,y-5),1,1.3,(255,255,0),1,cv2.LINE_AA)
+
+        #         if result[1] < 80:
+        #             cv2.putText(frame2, '{}'.format(imagePaths[result[0]]), (x,y-25),2,1.1,(0,255,0),1,cv2.LINE_AA)
+        #             cv2.rectangle(frame2, (x,y), (x+w,y+h), (0,255,0),2) 
+        #         else:
+        #             cv2.putText(frame2, 'Desconocido', (x,y-20),2,0.8,(0,0,255),1,cv2.LINE_AA)
+        #             cv2.rectangle(frame2, (x,y), (x+w,y+h), (0,0,255),2)
+
+        #         # cv2.rectangle(frame, (x,y), (x+w,y+h), (0,255,0),2)
+
+        #     cv2.imshow('frame2',cv2.resize(frame2,(800,600)))
 
         if cv2.waitKey(1) == ord('Z'):
+            # arduino.close()
             break
 
     cap.release()
+    cap2.release()
     cv2.destroyAllWindows()
-    print(file)
+    # print(conjunto)
     return Select(request, conjunto)
 
 
@@ -249,5 +303,5 @@ def Eliminar(request, id):
     Reconociendo(request)
     # except:
     #     pass
-
+    messages.info(request,"Usuario eliminado exitosamente")
     return redirect('users')

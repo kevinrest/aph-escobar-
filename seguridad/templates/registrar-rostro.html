@@ -11,9 +11,31 @@
 </head>
 <body>
     <div class="container-fluid contenedor">
-        <div class="col-lg-3">
-            <h1 style="font-size: 38px;">Registrar usuario</h1>
-            <div class="card">
+       <div class="row fila">
+        <div class="col-lg-4">
+            <p>
+                <button class="btn btn-dark" type="button" data-bs-toggle="collapse" data-bs-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
+                  Menú
+                </button>
+              </p>
+              <div style="min-height: 120px;">
+                <div class="collapse collapse-horizontal" id="collapseWidthExample">
+                  <div class="card card-body" style="width: 300px;">
+                    <ul>
+                        <li class="lista"><a href="/seguridad/" class="redic">Página principal</a></li>
+                        <li class="lista"><a href="/registro/" class="redic">Registrar usuario</a></li>
+                        <li class="lista"><a href="/users/" class="redic">Usuarios registrados</a></li>
+                        <li class="lista"><a href="/reconocimiento/" class="redic">Reconocer</a></li>
+                        <li class="lista"><a href="/reconociendo/" class="redic">Reconociendo</a></li>
+                        <li class="lista"><a href="/logout/" class="redic">Cerrar sesión</a></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+        </div>
+        <div class="col-lg-8 fil" style="width: 30%;">
+            <h1>Registrar usuario</h1>
+            <div class="card carta">  
                 <div class="card-body">
                     <form action="/registrar/" method="POST">{% csrf_token %}
                         <input type="number" name="id" class="form-control campo" placeholder="Identificación" required>
@@ -37,6 +59,7 @@
                 </ul>
             {% endif %}
         </div>
+       </div>
     </div>
 
     
