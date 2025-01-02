@@ -141,8 +141,8 @@ def Reconocimiento(request):
     file = [] 
 
     # codigo para conectar con arduino
-    # arduino = serial.Serial('COM3',9600)
-    # time.sleep(2)
+    arduino = serial.Serial('COM5',9600)
+    time.sleep(2)
 
     while True:        
         ret, frame = cap.read()
@@ -155,11 +155,14 @@ def Reconocimiento(request):
             faces = faceClassif.detectMultiScale(gray,1.3,5)
 
             # try:
-            #     if len(faces) == 1 and arduino.is_open:
-            #         confirm = True
-            #     elif len(faces) == 0 and not arduino.is_open:
-            #         confirm = False
+            #     if len(faces) == 1 and arduino.is_open == False:
             #         arduino.open()
+            #     elif len(faces) == 0 and arduino.is_open == True:
+            #         arduino.close()
+            #     # elif len(faces) == 0 and arduino.is_open == True:
+            #     #     arduino.close()
+            #     # elif len(faces) == 1 and arduino.is_open == True:
+            #     #     arduino.close()
             # except serial.SerialException as e:
             #     print(f'error 1 {e}')
 
@@ -171,12 +174,21 @@ def Reconocimiento(request):
                 cv2.putText(frame, '{}'.format(result), (x,y-5),1,1.3,(255,255,0),1,cv2.LINE_AA)
                 
                 if result[1] < 60:
-                    # try:
-                    #     if confirm == True:
-                    #         arduino.write(b'1')
-                    #         arduino.close()
-                    # except serial.SerialException as e:
-                    #     print(f'error {e}')
+                    try:
+                        if len(faces) == 1 and arduino.is_open == False:
+                            arduino.open()
+                        elif len(faces) == 1 and arduino.is_open == True:
+                            arduino.close()
+                    except serial.SerialException as e:
+                        print(f'error 1 {e}')
+
+                    try:
+                        if arduino.is_open == True:
+                            print("si entró 1")
+                            arduino.write(b'1')
+                            # arduino.close()
+                    except serial.SerialException as e:
+                        print(f'error 2 {e}')
                     
 
                     filename = f'/{imagePaths[result[0]]}_250.jpg'
@@ -187,7 +199,6 @@ def Reconocimiento(request):
                         file[a] = filename
     
                         a += 1
-                    print(file)
     
                     a = 0
                     for i in file:
@@ -197,11 +208,9 @@ def Reconocimiento(request):
                         elif file[a-1] == file[a]:
                             file.remove(file[a])
                             file.append(' ')
-                            print('borrado')
     
                         if len(file[a]) == 1 and file[0] != filename:
                             file[a] = filename
-                            print('aqui entro')
                             break
                         else:
                             pass
@@ -212,12 +221,13 @@ def Reconocimiento(request):
                 else:
                     conjunto = ' '
 
-                    # try:
-                    #     if confirm == True and arduino.is_open:
-                    #         arduino.write(b'0')
-                    #         arduino.close()
-                    # except serial.SerialException as e:
-                    #     print(f'error 2 {e}')
+                    try:
+                        if arduino.is_open == True:
+                            print("si entró 2")
+                            arduino.write(b'0')
+                            # arduino.close()
+                    except serial.SerialException as e:
+                        print(f'error 3 {e}')
 
                     cv2.putText(frame, 'Desconocido', (x,y-20),2,0.8,(0,0,255),1,cv2.LINE_AA)
                     cv2.rectangle(frame, (x,y), (x+w,y+h), (0,0,255),2)
