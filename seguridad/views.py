@@ -12,7 +12,7 @@ from shutil import rmtree
 import serial, time
 
 def Reconociendo(request):
-    dataPath = ''"C:/Users/kevin/OneDrive/Documentos/cara/seguridad/reconocimiento/data"
+    dataPath = "C:/Users/pcv/aph-escobar-/seguridad/reconocimiento/data"
     peoplelist = os.listdir(dataPath)
 
     labels = []
@@ -65,7 +65,7 @@ def Registrar(request):
 
 
     personName = f'{nombre}_{apellido}'
-    dataPath = "C:/Users/kevin/OneDrive/Documentos/cara/seguridad/reconocimiento/data"
+    dataPath = "C:/Users/pcv/aph-escobar-/seguridad/reconocimiento/data"
     personPath = dataPath + '/' + personName
     # print(personPath)
 
@@ -120,7 +120,7 @@ def Select(request, filename):
 
 
 def Reconocimiento(request):
-    dataPath = ''"C:/Users/kevin/OneDrive/Documentos/cara/seguridad/reconocimiento/data"
+    dataPath = "C:/Users/pcv/aph-escobar-/seguridad/reconocimiento/data"
     imagePaths = os.listdir(dataPath)
     
 
