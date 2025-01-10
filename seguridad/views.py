@@ -290,7 +290,7 @@ def Editar(request, id):
     return render(request, 'editar.html', {'form': form})
 
 def Eliminar(request, id):
-    dataPath = ''"C:/Users/kevin/OneDrive/Documentos/cara/seguridad/reconocimiento/data"
+    dataPath = C:/Users/pcv/aph-escobar-/seguridad/reconocimiento/data
     imagePaths = os.listdir(dataPath)
 
     insert = models.residents.objects.get(identificacion = id)
