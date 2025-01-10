@@ -142,7 +142,7 @@ def Reconocimiento(request):
 
     # codigo para conectar con arduino
     #arduino = serial.Serial('COM5',9600)
-    t#ime.sleep(2)
+    #time.sleep(2)
 
     while True:        
         ret, frame = cap.read()
