@@ -73,7 +73,7 @@ def Registrar(request):
         os.makedirs(personPath)
 
     url = "https://192.168.0.25:8080/video"
-    cap = cv2.VideoCapture(1, cv2.CAP_DSHOW)
+    cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 
     faceClassif = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
     count = 0
