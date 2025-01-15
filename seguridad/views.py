@@ -141,8 +141,8 @@ def Reconocimiento(request):
     file = [] 
 
     # codigo para conectar con arduino
-    #arduino = serial.Serial('COM5',9600)
-    #time.sleep(2)
+    arduino = serial.Serial('COM5',9600)
+    time.sleep(2)
 
     while True:        
         ret, frame = cap.read()
@@ -174,20 +174,20 @@ def Reconocimiento(request):
                 cv2.putText(frame, '{}'.format(result), (x,y-5),1,1.3,(255,255,0),1,cv2.LINE_AA)
                 
                 if result[1] < 60:
-                   # try:
-                    #    if len(faces) == 1 and arduino.is_open == False:
-                     #       arduino.open()
-                     #   elif len(faces) == 1 and arduino.is_open == True:
-                     #       arduino.close()
-                   # except serial.SerialException as e:
-                    #    print(f'error 1 {e}')
+                    try:
+                        if len(faces) == 1 and arduino.is_open == False:
+                            arduino.open()
+                        elif len(faces) == 1 and arduino.is_open == True:
+                            arduino.close()
+                    except serial.SerialException as e:
+                        print(f'error 1 {e}')
 
-                    #try:
-                    #    if arduino.is_open == True:
-                    #        print("si entró 1")
-                     #       arduino.write(b'1')
-                    #except serial.SerialException as e:
-                     #   print(f'error 2 {e}')
+                    try:
+                        if arduino.is_open == True:
+                            print("si entró 1")
+                            arduino.write(b'1')
+                    except serial.SerialException as e:
+                        print(f'error 2 {e}')
                     
 
                     filename = f'/{imagePaths[result[0]]}_250.jpg'
@@ -220,12 +220,12 @@ def Reconocimiento(request):
                 else:
                     conjunto = ' '
 
-                    #try:
-                    #    if arduino.is_open == True:
-                    #        print("si entró 2")
-                    #        arduino.write(b'0')
-                    #except serial.SerialException as e:
-                    #    print(f'error 3 {e}')
+                    try:
+                        if arduino.is_open == True:
+                            print("si entró 2")
+                            arduino.write(b'0')
+                    except serial.SerialException as e:
+                        print(f'error 3 {e}')
 
                     cv2.putText(frame, 'Desconocido', (x,y-20),2,0.8,(0,0,255),1,cv2.LINE_AA)
                     cv2.rectangle(frame, (x,y), (x+w,y+h), (0,0,255),2)
