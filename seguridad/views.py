@@ -135,7 +135,7 @@ def Reconocimiento(request):
     
     url = "https://192.168.1.14:8080/video"
     cap = cv2.VideoCapture(0,cv2.CAP_DSHOW)
-    cap2 = cv2.VideoCapture(1)
+    cap2 = cv2.VideoCapture(0,cv2.CAP_DSHOW)
 
     faceClassif = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
     file = [] 
@@ -233,30 +233,89 @@ def Reconocimiento(request):
             cv2.imshow('frame',cv2.resize(frame,(800,600)))
 
 
-        # if ret2:
-        #     gray = cv2.cvtColor(frame2, cv2.COLOR_BGR2GRAY)
-        #     auxframe = gray.copy()
+        if ret2:
+            gray = cv2.cvtColor(frame2, cv2.COLOR_BGR2GRAY)
+            auxframe = gray.copy()
 
-        #     faces = faceClassif.detectMultiScale(gray,1.3,5)
+            faces = faceClassif.detectMultiScale(gray,1.3,5)
 
-        #     for (x,y,w,h) in faces:
-        #         rostro = auxframe[y:y+h,x:x+w]
-        #         rostro = cv2.resize(rostro,(150,150), interpolation=cv2.INTER_CUBIC)
-        #         result = face_recognizer.predict(rostro)
-        #         # print(rostro)
+            # try:
+            #     if len(faces) == 1 and arduino.is_open == False:
+            #         arduino.open()
+            #     elif len(faces) == 0 and arduino.is_open == True:
+            #         arduino.close()
+            #     # elif len(faces) == 0 and arduino.is_open == True:
+            #     #     arduino.close()
+            #     # elif len(faces) == 1 and arduino.is_open == True:
+            #     #     arduino.close()
+            # except serial.SerialException as e:
+            #     print(f'error 1 {e}')
 
-        #         cv2.putText(frame2, '{}'.format(result), (x,y-5),1,1.3,(255,255,0),1,cv2.LINE_AA)
+            for (x,y,w,h) in faces:
+                rostro = auxframe[y:y+h,x:x+w]
+                rostro = cv2.resize(rostro,(150,150), interpolation=cv2.INTER_CUBIC)
+                result = face_recognizer.predict(rostro)
 
-        #         if result[1] < 80:
-        #             cv2.putText(frame2, '{}'.format(imagePaths[result[0]]), (x,y-25),2,1.1,(0,255,0),1,cv2.LINE_AA)
-        #             cv2.rectangle(frame2, (x,y), (x+w,y+h), (0,255,0),2) 
-        #         else:
-        #             cv2.putText(frame2, 'Desconocido', (x,y-20),2,0.8,(0,0,255),1,cv2.LINE_AA)
-        #             cv2.rectangle(frame2, (x,y), (x+w,y+h), (0,0,255),2)
+                cv2.putText(frame2, '{}'.format(result), (x,y-5),1,1.3,(255,255,0),1,cv2.LINE_AA)
+                
+                if result[1] < 60:
+                    try:
+                        if len(faces) == 1 and arduino.is_open == False:
+                            arduino.open()
+                        elif len(faces) == 1 and arduino.is_open == True:
+                            arduino.close()
+                    except serial.SerialException as e:
+                        print(f'error 1 {e}')
 
-        #         # cv2.rectangle(frame, (x,y), (x+w,y+h), (0,255,0),2)
+                    try:
+                        if arduino.is_open == True:
+                            print("si entró 1")
+                            arduino.write(b'1')
+                    except serial.SerialException as e:
+                        print(f'error 2 {e}')
+                    
 
-        #     cv2.imshow('frame2',cv2.resize(frame2,(800,600)))
+                    filename = f'/{imagePaths[result[0]]}_250.jpg'
+                    a = 0
+                    while len(file) < len(imagePaths):
+                        file.append(' ')
+    
+                        file[a] = filename
+    
+                        a += 1
+    
+                    a = 0
+                    for i in file:
+                        a += 1
+                        if a == len(file):
+                            break
+                        elif file[a-1] == file[a]:
+                            file.remove(file[a])
+                            file.append(' ')
+    
+                        if len(file[a]) == 1 and file[0] != filename:
+                            file[a] = filename
+                            break
+                        else:
+                            pass
+                        
+                    conjunto = set(file)
+                    cv2.putText(frame2, '{}'.format(imagePaths[result[0]]), (x,y-25),2,1.1,(0,255,0),1,cv2.LINE_AA)
+                    cv2.rectangle(frame2, (x,y), (x+w,y+h), (0,255,0),2) 
+                else:
+                    conjunto = ' '
+
+                    try:
+                        if arduino.is_open == True:
+                            print("si entró 2")
+                            arduino.write(b'0')
+                    except serial.SerialException as e:
+                        print(f'error 3 {e}')
+
+                    cv2.putText(frame2, 'Desconocido', (x,y-20),2,0.8,(0,0,255),1,cv2.LINE_AA)
+                    cv2.rectangle(frame2, (x,y), (x+w,y+h), (0,0,255),2)
+
+            cv2.imshow('frame2',cv2.resize(frame2,(800,600)))
 
         if cv2.waitKey(1) == ord('Z'):
             # arduino.close()
