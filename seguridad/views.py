@@ -274,36 +274,9 @@ def Reconocimiento(request):
                     except serial.SerialException as e:
                         print(f'error 2 {e}')
                     
-
-                    filename = f'/{imagePaths[result[0]]}_250.jpg'
-                    a = 0
-                    while len(file) < len(imagePaths):
-                        file.append(' ')
-    
-                        file[a] = filename
-    
-                        a += 1
-    
-                    a = 0
-                    for i in file:
-                        a += 1
-                        if a == len(file):
-                            break
-                        elif file[a-1] == file[a]:
-                            file.remove(file[a])
-                            file.append(' ')
-    
-                        if len(file[a]) == 1 and file[0] != filename:
-                            file[a] = filename
-                            break
-                        else:
-                            pass
-                        
-                    conjunto = set(file)
                     cv2.putText(frame2, '{}'.format(imagePaths[result[0]]), (x,y-25),2,1.1,(0,255,0),1,cv2.LINE_AA)
                     cv2.rectangle(frame2, (x,y), (x+w,y+h), (0,255,0),2) 
                 else:
-                    conjunto = ' '
 
                     try:
                         if arduino.is_open == True:
@@ -325,10 +298,7 @@ def Reconocimiento(request):
     cap2.release()
     cv2.destroyAllWindows()
     # print(conjunto)
-    try:
-        return Select(request, conjunto)
-    except:
-        pass
+    return Select(request, conjunto)
 
 def Registrar2(request):
     return render(request, 'registrar-rostro.html')
