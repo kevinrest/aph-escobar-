@@ -134,8 +134,8 @@ def Reconocimiento(request):
     face_recognizer.read('modeloLBPHFace.xml')
     
     url = "https://192.168.1.14:8080/video"
-    cap = cv2.VideoCapture(1,cv2.CAP_DSHOW)
-    cap2 = cv2.VideoCapture(2)
+    cap = cv2.VideoCapture(0,cv2.CAP_DSHOW)
+    cap2 = cv2.VideoCapture(1,cv2.CAP_DSHOW)
 
     faceClassif = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
     file = [] 
