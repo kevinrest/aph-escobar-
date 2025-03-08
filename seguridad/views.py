@@ -135,7 +135,7 @@ def Reconocimiento(request):
     
     url = "https://192.168.1.14:8080/video"
     cap = cv2.VideoCapture(0,cv2.CAP_DSHOW)
-    cap2 = cv2.VideoCapture(1,cv2.CAP_DSHOW)
+    cap2 = cv2.VideoCapture(1)
 
     faceClassif = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
     file = [] 
@@ -325,8 +325,10 @@ def Reconocimiento(request):
     cap2.release()
     cv2.destroyAllWindows()
     # print(conjunto)
-    return Select(request, conjunto)
-
+    try:
+        return Select(request, conjunto)
+    except:
+        pass
 
 def Registrar2(request):
     return render(request, 'registrar-rostro.html')
