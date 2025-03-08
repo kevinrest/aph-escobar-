@@ -135,7 +135,7 @@ def Reconocimiento(request):
     
     url = "https://192.168.1.14:8080/video"
     cap = cv2.VideoCapture(0,cv2.CAP_DSHOW)
-    cap2 = cv2.VideoCapture(1,cv2.CAP_DSHOW)
+    cap3 = cv2.VideoCapture(1,cv2.CAP_DSHOW)
 
     faceClassif = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
     file = [] 
@@ -146,7 +146,7 @@ def Reconocimiento(request):
 
     while True:        
         ret, frame = cap.read()
-        ret2, frame2 = cap2.read()
+        ret2, frame2 = cap3.read()
 
         if ret:
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -295,7 +295,7 @@ def Reconocimiento(request):
             break
 
     cap.release()
-    cap2.release()
+    cap3.release()
     cv2.destroyAllWindows()
     # print(conjunto)
     return Select(request, conjunto)
