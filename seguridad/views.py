@@ -146,7 +146,6 @@ def Reconocimiento(request):
 
     while True:        
         ret, frame = cap.read()
-        ret2, frame2 = cap3.read()
 
         if ret:
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
