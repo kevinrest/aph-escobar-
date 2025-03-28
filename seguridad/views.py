@@ -236,7 +236,6 @@ def Reconocimiento(request):
             break
 
     cap.release()
-    cap3.release()
     cv2.destroyAllWindows()
     # print(conjunto)
     return Select(request, conjunto)
