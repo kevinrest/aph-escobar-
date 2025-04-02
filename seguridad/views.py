@@ -172,7 +172,7 @@ def Reconocimiento(request):
 
                 cv2.putText(frame, '{}'.format(result), (x,y-5),1,1.3,(255,255,0),1,cv2.LINE_AA)
                 
-                if result[1] < 60:
+                if result[1] < 45:
                     try:
                         if len(faces) == 1 and arduino.is_open == False:
                             arduino.open()
